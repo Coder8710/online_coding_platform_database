@@ -1,0 +1,213 @@
+-- Create User table
+CREATE TABLE User (
+    user_id INT PRIMARY KEY,
+    Name VARCHAR(100) NOT NULL,
+    email_id VARCHAR(100) NOT NULL,
+    password VARCHAR(100) NOT NULL,
+    total_problems INT,
+    sub_id INT
+);
+
+-- Create Subscription table
+CREATE TABLE Subscription (
+    sub_id INT PRIMARY KEY,
+    amount INT NOT NULL,
+    title VARCHAR(100) NOT NULL
+);
+
+-- Create Payment table
+CREATE TABLE Payment (
+    pay_id INT PRIMARY KEY,
+    user_id INT NOT NULL,
+    sub_id INT NOT NULL,
+    pay_method VARCHAR(50) NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES User(user_id),
+    FOREIGN KEY (sub_id) REFERENCES Subscription(sub_id)
+);
+
+-- Create Competition table
+CREATE TABLE Competition (
+    comp_id INT PRIMARY KEY,
+    user_id INT NOT NULL,
+    comp_status VARCHAR(50) NOT NULL,
+    comp_date DATE NOT NULL,
+    title VARCHAR(100) NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES User(user_id)
+);
+
+-- Create Leaderboard table
+CREATE TABLE Leaderboard (
+    lead_id INT PRIMARY KEY,
+    comp_id INT NOT NULL,
+    user_id INT NOT NULL,
+    `rank` INT NOT NULL,
+    score INT NOT NULL,
+    FOREIGN KEY (comp_id) REFERENCES Competition(comp_id),
+    FOREIGN KEY (user_id) REFERENCES User(user_id)
+);
+
+-- Create Problem table
+CREATE TABLE Problem (
+    prob_id INT PRIMARY KEY,
+    Difficulty VARCHAR(50) NOT NULL,
+    category VARCHAR(100) NOT NULL,
+    title VARCHAR(100) NOT NULL,
+    sol_id INT
+);
+
+-- Create Solution table
+CREATE TABLE Solution (
+    sol_id INT PRIMARY KEY,
+    prob_id INT NOT NULL,
+    sol_code TEXT NOT NULL,
+    prog_language VARCHAR(25) NOT NULL,
+    ex_time FLOAT NOT NULL,
+    FOREIGN KEY (prob_id) REFERENCES Problem(prob_id)
+);
+
+-- Create Course table
+CREATE TABLE Course (
+    cour_id INT PRIMARY KEY,
+    cou_type VARCHAR(50) NOT NULL,
+    content TEXT NOT NULL,
+    user_id INT,
+    FOREIGN KEY (user_id) REFERENCES User(user_id)
+);
+
+-- Create Comments table
+CREATE TABLE Comments (
+    com_id INT PRIMARY KEY,
+    sol_id INT NOT NULL,
+    user_id INT NOT NULL,
+    com_content TEXT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES User(user_id),
+    FOREIGN KEY (sol_id) REFERENCES Solution(sol_id)
+);
+
+-- Create Activity_Log table
+CREATE TABLE Activity_Log (
+    log_id INT PRIMARY KEY,
+    sub_id INT NOT NULL,
+    user_id INT NOT NULL,
+    FOREIGN KEY (sub_id) REFERENCES Subscription(sub_id),
+    FOREIGN KEY (user_id) REFERENCES User(user_id)
+);
+
+-- Create Submission table
+CREATE TABLE Submission (
+    sub_id INT PRIMARY KEY,
+    prob_id INT NOT NULL,
+    user_id INT NOT NULL,
+    date DATE NOT NULL,
+    status VARCHAR(50) NOT NULL,
+    total_attempts INT NOT NULL,
+    FOREIGN KEY (prob_id) REFERENCES Problem(prob_id),
+    FOREIGN KEY (user_id) REFERENCES User(user_id)
+);
+
+-- Create Notification table
+CREATE TABLE Notification (
+    not_id INT PRIMARY KEY,
+    comp_id INT NOT NULL,
+    user_id INT NOT NULL,
+    not_date DATE NOT NULL,
+    not_time TIME NOT NULL,
+    FOREIGN KEY (comp_id) REFERENCES Competition(comp_id),
+    FOREIGN KEY (user_id) REFERENCES User(user_id)
+);
+
+-- Insert data into User table
+INSERT INTO User (user_id, Name, email_id, password, total_problems, sub_id) VALUES
+(1, 'Alice', 'alice@example.com', 'password123', 10, 1),
+(2, 'Bob', 'bob@example.com', 'securepass', 15, 2),
+(3, 'Charlie', 'charlie@example.com', 'mypassword', 20, 3),
+(4, 'Diana', 'diana@example.com', 'pass1234', 25, 4),
+(5, 'Eve', 'eve@example.com', 'evepass', 30, 5);
+
+-- Insert data into Subscription table
+INSERT INTO Subscription (sub_id, amount, title) VALUES
+(1, 100, 'Basic Plan'),
+(2, 200, 'Standard Plan'),
+(3, 300, 'Premium Plan'),
+(4, 400, 'Enterprise Plan'),
+(5, 500, 'Ultimate Plan');
+
+-- Insert data into Payment table
+INSERT INTO Payment (pay_id, user_id, sub_id, pay_method) VALUES
+(1, 1, 1, 'Credit Card'),
+(2, 2, 2, 'PayPal'),
+(3, 3, 3, 'Debit Card'),
+(4, 4, 4, 'Net Banking'),
+(5, 5, 5, 'UPI');
+
+-- Insert data into Competition table
+INSERT INTO Competition (comp_id, user_id, comp_status, comp_date, title) VALUES
+(1, 1, 'Completed', '2025-02-15', 'Code Challenge 1'),
+(2, 2, 'Ongoing', '2025-02-20', 'Code Challenge 2'),
+(3, 3, 'Upcoming', '2025-02-25', 'Code Challenge 3'),
+(4, 4, 'Completed', '2025-02-10', 'Code Challenge 4'),
+(5, 5, 'Ongoing', '2025-02-21', 'Code Challenge 5');
+
+-- Insert data into Leaderboard table
+INSERT INTO Leaderboard (lead_id, comp_id, user_id, `rank`, score) VALUES
+(1, 1, 1, 1, 95),
+(2, 2, 2, 2, 90),
+(3, 3, 3, 3, 85),
+(4, 4, 4, 4, 80),
+(5, 5, 5, 5, 75);
+
+-- Insert data into Problem table
+INSERT INTO Problem (prob_id, Difficulty, category, title, sol_id) VALUES
+(1, 'Easy', 'Math', 'Addition Problem', 1),
+(2, 'Medium', 'Algorithms', 'Sorting Problem', 2),
+(3, 'Hard', 'Data Structures', 'Tree Problem', 3),
+(4, 'Easy', 'Logic', 'Logic Puzzle', 4),
+(5, 'Medium', 'Graph Theory', 'Graph Problem', 5);
+
+-- Insert data into Solution table
+INSERT INTO Solution (sol_id, prob_id, sol_code, prog_language, ex_time) VALUES
+(1, 1, 'def add(a, b): return a + b', 'Python', 0.01),
+(2, 2, 'def sort(arr): return sorted(arr)', 'Python', 0.02),
+(3, 3, 'def tree_height(root): return 1 + max(tree_height(root.left), tree_height(root.right))', 'Python', 0.05),
+(4, 4, 'def solve_logic_puzzle(data): return True', 'Python', 0.03),
+(5, 5, 'def find_shortest_path(graph, start, end): return []', 'Python', 0.04);
+
+-- Insert data into Course table
+INSERT INTO Course (cour_id, cou_type, content, user_id) VALUES
+(1, 'Video', 'Introduction to Python', 1),
+(2, 'Text', 'Advanced Algorithms', 2),
+(3, 'Video', 'Data Structures Basics', 3),
+(4, 'Text', 'Graph Theory', 4),
+(5, 'Video', 'Competitive Programming', 5);
+
+-- Insert data into Comments table
+INSERT INTO Comments (com_id, sol_id, user_id, com_content) VALUES
+(1, 1, 1, 'Great solution!'),
+(2, 2, 2, 'Very helpful, thanks!'),
+(3, 3, 3, 'Can you explain this part?'),
+(4, 4, 4, 'This is efficient!'),
+(5, 5, 5, 'I learned a lot from this.');
+
+-- Insert data into Activity_Log table
+INSERT INTO Activity_Log (log_id, sub_id, user_id) VALUES
+(1, 1, 1),
+(2, 2, 2),
+(3, 3, 3),
+(4, 4, 4),
+(5, 5, 5);
+
+-- Insert data into Submission table
+INSERT INTO Submission (sub_id, prob_id, user_id, date, status, total_attempts) VALUES
+(1, 1, 1, '2025-02-20', 'Accepted', 1),
+(2, 2, 2, '2025-02-19', 'Rejected', 3),
+(3, 3, 3, '2025-02-18', 'Accepted', 2),
+(4, 4, 4, '2025-02-17', 'Rejected', 4),
+(5, 5, 5, '2025-02-16', 'Accepted', 1);
+
+-- Insert data into Notification table
+INSERT INTO Notification (not_id, comp_id, user_id, not_date, not_time) VALUES
+(1, 1, 1, '2025-02-15', '10:00:00'),
+(2, 2, 2, '2025-02-20', '11:00:00'),
+(3, 3, 3, '2025-02-25', '12:00:00'),
+(4, 4, 4, '2025-02-10', '13:00:00'),
+(5, 5, 5, '2025-02-21', '14:00:00');
