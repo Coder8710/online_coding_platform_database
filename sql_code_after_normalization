@@ -1,214 +1,36 @@
 
--- User Table
 CREATE TABLE User_normalized (
     user_id INT PRIMARY KEY,
     Name VARCHAR(100) NOT NULL,
     email_id VARCHAR(100) NOT NULL,
-    password VARCHAR(100) NOT NULL
+    password VARCHAR(100) NOT NULL,
+    total_problems INT
 );
 
--- Subscription Table
-CREATE TABLE Subscription_normalized (
-    sub_id INT PRIMARY KEY,
-    amount INT NOT NULL,
-    title VARCHAR(100) NOT NULL
-);
-
--- Payment Table
-CREATE TABLE Payment_normalized (
-    pay_id INT PRIMARY KEY,
+-- Create User_Subscription table to link users and subscriptions
+CREATE TABLE User_Subscription (
     user_id INT NOT NULL,
     sub_id INT NOT NULL,
-    pay_method VARCHAR(50) NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES User_normalized(user_id),
-    FOREIGN KEY (sub_id) REFERENCES Subscription_normalized(sub_id)
-);
-
--- Competition Table
-CREATE TABLE Competition_normalized (
-    comp_id INT PRIMARY KEY,
-    user_id INT NOT NULL,
-    comp_status VARCHAR(50) NOT NULL,
-    comp_date DATE NOT NULL,
-    title VARCHAR(100) NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES User_normalized(user_id)
-);
-
--- Leaderboard Table
-CREATE TABLE Leaderboard_normalized (
-    lead_id INT PRIMARY KEY,
-    comp_id INT NOT NULL,
-    user_id INT NOT NULL,
-    `rank` INT NOT NULL,
-    score INT NOT NULL,
-    FOREIGN KEY (comp_id) REFERENCES Competition_normalized(comp_id),
-    FOREIGN KEY (user_id) REFERENCES User_normalized(user_id)
-);
-
--- Problem Table
-CREATE TABLE Problem_normalized (
-    prob_id INT PRIMARY KEY,
-    Difficulty VARCHAR(50) NOT NULL,
-    category VARCHAR(100) NOT NULL,
-    title VARCHAR(100) NOT NULL
-);
-
--- Solution Table
-CREATE TABLE Solution_normalized (
-    sol_id INT PRIMARY KEY,
-    prob_id INT NOT NULL,
-    sol_code TEXT NOT NULL,
-    prog_language VARCHAR(25) NOT NULL,
-    ex_time FLOAT NOT NULL,
-    FOREIGN KEY (prob_id) REFERENCES Problem_normalized(prob_id)
-);
-
--- Course Table
-CREATE TABLE Course_normalized (
-    cour_id INT PRIMARY KEY,
-    cou_type VARCHAR(50) NOT NULL,
-    content TEXT NOT NULL,
-    user_id INT,
-    FOREIGN KEY (user_id) REFERENCES User_normalized(user_id)
-);
-
--- Comments Table
-CREATE TABLE Comments_normalized (
-    com_id INT PRIMARY KEY,
-    sol_id INT NOT NULL,
-    user_id INT NOT NULL,
-    com_content TEXT NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES User_normalized(user_id),
-    FOREIGN KEY (sol_id) REFERENCES Solution_normalized(sol_id)
-);
-
--- Activity_Log Table
-CREATE TABLE Activity_Log_normalized (
-    log_id INT PRIMARY KEY,
-    sub_id INT NOT NULL,
-    user_id INT NOT NULL,
-    FOREIGN KEY (sub_id) REFERENCES Subscription_normalized(sub_id),
-    FOREIGN KEY (user_id) REFERENCES User_normalized(user_id)
-);
-
--- Submission Table
-CREATE TABLE Submission_normalized (
-    sub_id INT PRIMARY KEY,
-    prob_id INT NOT NULL,
-    user_id INT NOT NULL,
-    date DATE NOT NULL,
-    status VARCHAR(50) NOT NULL,
-    total_attempts INT NOT NULL,
-    FOREIGN KEY (prob_id) REFERENCES Problem_normalized(prob_id),
-    FOREIGN KEY (user_id) REFERENCES User_normalized(user_id)
-);
-
--- Notification Table
-CREATE TABLE Notification_normalized (
-    not_id INT PRIMARY KEY,
-    comp_id INT NOT NULL,
-    user_id INT NOT NULL,
-    not_date DATE NOT NULL,
-    not_time TIME NOT NULL,
-    FOREIGN KEY (comp_id) REFERENCES Competition_normalized(comp_id),
-    FOREIGN KEY (user_id) REFERENCES User_normalized(user_id)
+    PRIMARY KEY (user_id, sub_id),
+    FOREIGN KEY (user_id) REFERENCES User(user_id),
+    FOREIGN KEY (sub_id) REFERENCES Subscription(sub_id)
 );
 
 -- Insert data into User_normalized table
-INSERT INTO User_normalized (user_id, Name, email_id, password) VALUES
-(1, 'Alice', 'alice@example.com', 'password123'),
-(2, 'Bob', 'bob@example.com', 'securepass'),
-(3, 'Charlie', 'charlie@example.com', 'mypassword'),
-(4, 'Diana', 'diana@example.com', 'pass1234'),
-(5, 'Eve', 'eve@example.com', 'evepass');
+INSERT INTO User_normalized (user_id, Name, email_id, password, total_problems) VALUES
+(1, 'Alice', 'alice@example.com', 'password123', 10),
+(2, 'Bob', 'bob@example.com', 'securepass', 15),
+(3, 'Charlie', 'charlie@example.com', 'mypassword', 20),
+(4, 'Diana', 'diana@example.com', 'pass1234', 25),
+(5, 'Eve', 'eve@example.com', 'evepass', 30);
 
--- Insert data into Subscription_normalized table
-INSERT INTO Subscription_normalized (sub_id, amount, title) VALUES
-(1, 100, 'Basic Plan'),
-(2, 200, 'Standard Plan'),
-(3, 300, 'Premium Plan'),
-(4, 400, 'Enterprise Plan'),
-(5, 500, 'Ultimate Plan');
-
--- Insert data into Payment_normalized table
-INSERT INTO Payment_normalized (pay_id, user_id, sub_id, pay_method) VALUES
-(1, 1, 1, 'Credit Card'),
-(2, 2, 2, 'PayPal'),
-(3, 3, 3, 'Debit Card'),
-(4, 4, 4, 'Net Banking'),
-(5, 5, 5, 'UPI');
-
--- Insert data into Competition_normalized table
-INSERT INTO Competition_normalized (comp_id, user_id, comp_status, comp_date, title) VALUES
-(1, 1, 'Completed', '2025-02-15', 'Code Challenge 1'),
-(2, 2, 'Ongoing', '2025-02-20', 'Code Challenge 2'),
-(3, 3, 'Upcoming', '2025-02-25', 'Code Challenge 3'),
-(4, 4, 'Completed', '2025-02-10', 'Code Challenge 4'),
-(5, 5, 'Ongoing', '2025-02-21', 'Code Challenge 5');
-
--- Insert data into Leaderboard_normalized table
-INSERT INTO Leaderboard_normalized (lead_id, comp_id, user_id, `rank`, score) VALUES
-(1, 1, 1, 1, 95),
-(2, 2, 2, 2, 90),
-(3, 3, 3, 3, 85),
-(4, 4, 4, 4, 80),
-(5, 5, 5, 5, 75);
-
--- Insert data into Problem_normalized table
-INSERT INTO Problem_normalized (prob_id, Difficulty, category, title) VALUES
-(1, 'Easy', 'Math', 'Addition Problem'),
-(2, 'Medium', 'Algorithms', 'Sorting Problem'),
-(3,'Hard','Data Structures','Tree Problem'),
-(4,'Easy','Logic','Logic Puzzle'),
-(5,'Medium','Graph Theory','Graph Problem');
-
--- Insert data into Solution_normalized table
-INSERT INTO Solution_normalized (sol_id , prob_id , sol_code , prog_language , ex_time ) VALUES
-(1 ,1 ,'def add(a,b): return a+b' ,'Python' ,0.01),
-(2 ,2 ,'def sort(arr): return sorted(arr)' ,'Python' ,0.02),
-(3 ,3 ,'def tree_height(root): return max(tree_height(root.left),tree_height(root.right))' ,'Python' ,0.05),
-(4 ,4 ,'def solve_logic_puzzle(data): return True' ,'Python' ,0.03),
-(5 ,5 ,'def find_shortest_path(graph,start,end): return []' ,'Python' ,0.04);
-
--- Insert data into Course_normalized table
-INSERT INTO Course_normalized (cour_id , cou_type , content , user_id ) VALUES
-(1 ,'Video' ,'Introduction to Python' ,1 ),
-(2 ,'Text' ,'Advanced Algorithms' ,2 ),
-(3 ,'Video' ,'Data Structures Basics' ,3 ),
-(4 ,'Text' ,'Graph Theory' ,4 ),
-(5 ,'Video' ,'Competitive Programming' ,5 );
-
--- Insert data into Comments_normalized table
-INSERT INTO Comments_normalized (com_id , sol_id , user_id , com_content ) VALUES
-(1 ,1 ,1 ,'Great solution!'),
-(2 ,2 ,2 ,'Very helpful! Thanks!'),
-(3 ,3 ,3 ,'Can you explain this part?'),
-(4 ,4 ,4 ,'This is efficient!'),
-(5 ,5 ,5 ,'I learned a lot from this.');
-
--- Insert data into Activity_Log_normalized table
-INSERT INTO Activity_Log_normalized (log_id , sub_id , user_id ) VALUES
-(1 ,1 ,1 ),
-(2 ,2 ,2 ),
-(3 ,3 ,3 ),
-(4 ,4 ,4 ),
-(5 ,5 ,5 );
-
--- Insert data into Submission_normalized table
-INSERT INTO Submission_normalized (sub_id , prob_id , user_id , date , status , total_attempts ) VALUES
-(1 ,1 ,1 ,'2025-02-20' ,'Accepted' ,1 ),
-(2 ,2 ,2 ,'2025-02-19' ,'Rejected' ,3 ),
-(3 ,3 ,3 ,'2025-02-18' ,'Accepted' ,2 ),
-(4 ,4 ,4 ,'2025-02-17' ,'Rejected' ,4 ),
-(5 ,5 ,5 ,'2025-02-16' ,'Accepted' ,1 );
-
--- Insert data into Notification_normalized table
-INSERT INTO Notification_normalized (not_id, comp_id, user_id, not_date, not_time) VALUES 
- (1, 1, 1, '2025-02-15', '10:00:00'), 
- (2, 2, 2, '2025-02-20', '11:00:00'), 
- (3, 3, 3, '2025-02-25', '12:00:00'), 
- (4, 4, 4, '2025-02-10', '13:00:00'), 
- (5, 5, 5, '2025-02-21', '14:00:00');
+-- Insert data into User_Subscription table
+INSERT INTO User_Subscription (user_id, sub_id) VALUES
+(1, 1),
+(2, 2),
+(3, 3),
+(4, 4),
+(5, 5);
 
 
 
